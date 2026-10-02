@@ -35,6 +35,11 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+      HandleLateralMovement();
+    }
+
+    void HandleLateralMovement()
+    {
         Vector3 camForwardXZ = new Vector3(cam.transform.forward.x, 0f, cam.transform.forward.z).normalized;
         Vector3 camRightXZ = new Vector3(cam.transform.right.x, 0f, cam.transform.right.z).normalized;
         Vector3 movementDirection = camRightXZ * locomotionInput.MovementInput.x + camForwardXZ * locomotionInput.MovementInput.y;
@@ -43,7 +48,7 @@ public class PlayerController : MonoBehaviour
         Vector3 newVelocity = characterController.velocity + movementDelta;
 
         Vector3 currentDrag = newVelocity.normalized * drag * Time.deltaTime;
-        newVelocity = (newVelocity.magnitude > drag *  Time.deltaTime) ? newVelocity - currentDrag : Vector3.zero;
+        newVelocity = (newVelocity.magnitude > drag * Time.deltaTime) ? newVelocity - currentDrag : Vector3.zero;
         newVelocity = Vector3.ClampMagnitude(newVelocity, runSpeed);
 
         characterController.Move(newVelocity * Time.deltaTime);
