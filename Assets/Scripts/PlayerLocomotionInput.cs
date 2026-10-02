@@ -8,6 +8,10 @@ using UnityEngine.InputSystem;
 public class PlayerLocomotionInput : MonoBehaviour, InputSystem_Actions.IPlayerActions
 {
 
+    public bool holdToSprint = true;
+
+    public bool sprintToggledOn {  get; private set; }
+    
     public InputSystem_Actions controls { get; private set; }
     public Vector2 MovementInput { get; private set; }
     public Vector2 LookInput { get; private set; }
@@ -43,7 +47,15 @@ public class PlayerLocomotionInput : MonoBehaviour, InputSystem_Actions.IPlayerA
         MovementInput = context.ReadValue<Vector2>();
     }
 
-    
-
-
+    public void OnToggleSprint(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            sprintToggledOn = holdToSprint || !sprintToggledOn;
+        }
+        else if (context.canceled)
+        {
+            sprintToggledOn = !holdToSprint && sprintToggledOn;
+        }
+    }
 }

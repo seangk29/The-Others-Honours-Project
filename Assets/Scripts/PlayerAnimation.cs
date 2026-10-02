@@ -6,9 +6,11 @@ public class PlayerAnimation : MonoBehaviour
     public float locomotionBlendSpeed = 0.02f;
 
     public PlayerLocomotionInput playerLocomotionInput;
+    public PlayerState playerState;
 
     private static int inputXHash = Animator.StringToHash("inputX");
     private static int inputYHash = Animator.StringToHash("inputY");
+    private static int inputMagHash = Animator.StringToHash("inputMagnitude");
 
 
     Vector3 currentBlendInput = Vector3.zero;
@@ -18,6 +20,7 @@ public class PlayerAnimation : MonoBehaviour
         playerAnim = GetComponent<Animator>();
 
         playerLocomotionInput = GetComponent<PlayerLocomotionInput>();
+        playerState = GetComponent<PlayerState>();
         
     }
 
@@ -28,10 +31,15 @@ public class PlayerAnimation : MonoBehaviour
 
     private void UpdateAnimationState()
     {
-        Vector2 inputTarget = playerLocomotionInput.MovementInput;
+        bool isSprinting = playerState.currentPlayerMovementState == PlayerMovementState.Sprinting;
+        
+        Vector2 inputTarget = isSprinting ? playerLocomotionInput.MovementInput * 1.5f : playerLocomotionInput.MovementInput;
         currentBlendInput = Vector3.Lerp(currentBlendInput, inputTarget, locomotionBlendSpeed * Time.deltaTime);
+
+       
 
         playerAnim.SetFloat(inputXHash, currentBlendInput.x);
         playerAnim.SetFloat(inputYHash, currentBlendInput.y);
+        playerAnim.SetFloat(inputMagHash, currentBlendInput.magnitude);
     }
 }

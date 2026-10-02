@@ -1849,11 +1849,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6651156513433104018, guid: a91ea9f99198b5c4182a003d65417360, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.75
+      value: 1.62
       objectReference: {fileID: 0}
     - target: {fileID: 6651156513433104018, guid: a91ea9f99198b5c4182a003d65417360, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.15
+      value: 0.282
       objectReference: {fileID: 0}
     - target: {fileID: 6716006529107586521, guid: a91ea9f99198b5c4182a003d65417360, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1974,6 +1974,26 @@ PrefabInstance:
     - target: {fileID: 7997957925463251598, guid: a91ea9f99198b5c4182a003d65417360, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 6.1124067
+      objectReference: {fileID: 0}
+    - target: {fileID: 8000141434172231133, guid: a91ea9f99198b5c4182a003d65417360, type: 3}
+      propertyPath: drag
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 8000141434172231133, guid: a91ea9f99198b5c4182a003d65417360, type: 3}
+      propertyPath: runSpeed
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8000141434172231133, guid: a91ea9f99198b5c4182a003d65417360, type: 3}
+      propertyPath: lookLimitV
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 8000141434172231133, guid: a91ea9f99198b5c4182a003d65417360, type: 3}
+      propertyPath: sprintSpeed
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 8000141434172231133, guid: a91ea9f99198b5c4182a003d65417360, type: 3}
+      propertyPath: sprintAcceleration
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 8483846115896747278, guid: a91ea9f99198b5c4182a003d65417360, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
