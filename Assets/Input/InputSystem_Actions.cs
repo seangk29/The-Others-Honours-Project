@@ -118,6 +118,24 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Jump"",
+                    ""type"": ""Button"",
+                    ""id"": ""76b120cd-addb-4d6e-88cf-241caf8e5690"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Toggle Crouch"",
+                    ""type"": ""Button"",
+                    ""id"": ""7cdf856a-0fc4-498e-b210-94787c1df1cf"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -294,6 +312,50 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
                     ""action"": ""Toggle Sprint"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5f1b1ad3-63e5-48e1-ae92-92aa849970bb"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c83a0434-1fc7-4a4c-afd9-08ef667e6ac0"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c80fc1de-a970-413e-8e0b-bb25a564663b"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Toggle Crouch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3c431af4-a35c-4a15-8e3a-28d78a3fe79d"",
+                    ""path"": ""<Keyboard>/ctrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Toggle Crouch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -884,6 +946,8 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
         m_Player_ToggleSprint = m_Player.FindAction("Toggle Sprint", throwIfNotFound: true);
+        m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
+        m_Player_ToggleCrouch = m_Player.FindAction("Toggle Crouch", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -980,6 +1044,8 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Look;
     private readonly InputAction m_Player_ToggleSprint;
+    private readonly InputAction m_Player_Jump;
+    private readonly InputAction m_Player_ToggleCrouch;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -1003,6 +1069,14 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/ToggleSprint".
         /// </summary>
         public InputAction @ToggleSprint => m_Wrapper.m_Player_ToggleSprint;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Jump".
+        /// </summary>
+        public InputAction @Jump => m_Wrapper.m_Player_Jump;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/ToggleCrouch".
+        /// </summary>
+        public InputAction @ToggleCrouch => m_Wrapper.m_Player_ToggleCrouch;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1038,6 +1112,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @ToggleSprint.started += instance.OnToggleSprint;
             @ToggleSprint.performed += instance.OnToggleSprint;
             @ToggleSprint.canceled += instance.OnToggleSprint;
+            @Jump.started += instance.OnJump;
+            @Jump.performed += instance.OnJump;
+            @Jump.canceled += instance.OnJump;
+            @ToggleCrouch.started += instance.OnToggleCrouch;
+            @ToggleCrouch.performed += instance.OnToggleCrouch;
+            @ToggleCrouch.canceled += instance.OnToggleCrouch;
         }
 
         /// <summary>
@@ -1058,6 +1138,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @ToggleSprint.started -= instance.OnToggleSprint;
             @ToggleSprint.performed -= instance.OnToggleSprint;
             @ToggleSprint.canceled -= instance.OnToggleSprint;
+            @Jump.started -= instance.OnJump;
+            @Jump.performed -= instance.OnJump;
+            @Jump.canceled -= instance.OnJump;
+            @ToggleCrouch.started -= instance.OnToggleCrouch;
+            @ToggleCrouch.performed -= instance.OnToggleCrouch;
+            @ToggleCrouch.canceled -= instance.OnToggleCrouch;
         }
 
         /// <summary>
@@ -1379,6 +1465,20 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnToggleSprint(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Jump" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnJump(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Toggle Crouch" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnToggleCrouch(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

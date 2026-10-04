@@ -18,9 +18,15 @@ public class PlayerController : MonoBehaviour
     public float sprintAcceleration;
     public float sprintSpeed;
 
+    public float airAcceleration;
+
     public float drag;
     public float movingThreshold = 0.01f;
 
+    public float gravity = 25f;
+    public float jumpSpeed = 1f;
+
+    public float crouchSpeed;
 
     [Header("Camera Settings")]
     public float lookSenseH;
@@ -29,6 +35,7 @@ public class PlayerController : MonoBehaviour
 
     private Vector2 cameraRotation = Vector2.zero;
     private Vector2 playerTargetRotation = Vector2.zero;
+    private float verticalVelocity = 0f;
 
     private PlayerLocomotionInput locomotionInput;
     private PlayerState playersState;
@@ -45,8 +52,13 @@ public class PlayerController : MonoBehaviour
     #region Update Logic
     private void Update()
     {
-        HandleLateralMovement();
+        
         UpdateMovementState();
+        HandleVerticalMovement();
+        HandleLateralMovement();
+      
+
+
     }
 
 
@@ -55,23 +67,61 @@ public class PlayerController : MonoBehaviour
         bool isMovementInput = locomotionInput.MovementInput != Vector2.zero;
         bool isMovingLaterally = IsMovingLaterally();
         bool isSprinting = locomotionInput.sprintToggledOn && isMovingLaterally;
+      
+        bool isGrounded = IsGrounded();
+        
 
-        PlayerMovementState lateralState = isSprinting ? PlayerMovementState.Sprinting :
-                                           isMovingLaterally || isMovementInput ? PlayerMovementState.Running : 
-                                           PlayerMovementState.Idle;
+        PlayerMovementState lateralState = isSprinting ? PlayerMovementState.Sprinting : isMovingLaterally ||
+                                           isMovementInput ? PlayerMovementState.Running : PlayerMovementState.Idle;
         
         playersState.SetPlayerMovementState(lateralState);
+
+
+        //Control Airborn State
+        if (!isGrounded && characterController.velocity.y > 0f)
+        {
+            playersState.SetPlayerMovementState(PlayerMovementState.Jumping);
+        }
+        else if (!isGrounded && characterController.velocity.y <= 0f)
+        {
+            playersState.SetPlayerMovementState(PlayerMovementState.Falling);
+        }
+
     }
 
+    void HandleVerticalMovement()
+    {
+        bool isGrounded = playersState.InGroundedState();
+
+        if (isGrounded && verticalVelocity < 0f)
+        {
+            verticalVelocity = 0f;
+        }
+
+        verticalVelocity -= gravity * Time.deltaTime;
+
+        if (locomotionInput.JumpPressed && isGrounded)
+        {
+            verticalVelocity = Mathf.Sqrt(jumpSpeed * 3 * gravity);
+        }
+    }
+
+
+    
     
     void HandleLateralMovement()
     {
         // Create quick references for current state
         bool isSprinting = playersState.currentPlayerMovementState == PlayerMovementState.Sprinting;
+        bool isGrounded = playersState.InGroundedState();
+       
 
         // State dependant acceleration and speed
-        float lateralAcceleration = isSprinting ? sprintAcceleration : runAcceleration;
-        float clampLateralMagnitude = isSprinting ? sprintSpeed : runSpeed;
+        float lateralAcceleration = !isGrounded ? airAcceleration :
+                                    isSprinting ? sprintAcceleration : runAcceleration;
+
+        float clampLateralMagnitude = !isGrounded ? sprintSpeed:
+                                       isSprinting ? sprintSpeed : runSpeed;
         
         
         Vector3 camForwardXZ = new Vector3(cam.transform.forward.x, 0f, cam.transform.forward.z).normalized;
@@ -83,7 +133,8 @@ public class PlayerController : MonoBehaviour
 
         Vector3 currentDrag = newVelocity.normalized * drag * Time.deltaTime;
         newVelocity = (newVelocity.magnitude > drag * Time.deltaTime) ? newVelocity - currentDrag : Vector3.zero;
-        newVelocity = Vector3.ClampMagnitude(newVelocity, clampLateralMagnitude);
+        newVelocity = Vector3.ClampMagnitude(new Vector3(newVelocity.x, 0f, newVelocity.z), clampLateralMagnitude);
+        newVelocity.y += verticalVelocity;
 
         characterController.Move(newVelocity * Time.deltaTime);
     }
@@ -111,5 +162,11 @@ public class PlayerController : MonoBehaviour
 
         return lateralVelocity.magnitude > movingThreshold;
     }
+
+    private bool IsGrounded()
+    {
+        return characterController.isGrounded;
+    }
+
     #endregion
 }

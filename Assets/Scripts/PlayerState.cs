@@ -10,6 +10,15 @@ public class PlayerState : MonoBehaviour
         currentPlayerMovementState = playerMovementState;
     }
     
+
+    public bool InGroundedState()
+    {
+        return currentPlayerMovementState == PlayerMovementState.Idle ||
+               currentPlayerMovementState == PlayerMovementState.Walking ||
+               currentPlayerMovementState == PlayerMovementState.Running ||
+               currentPlayerMovementState == PlayerMovementState.Sprinting ||
+               currentPlayerMovementState == PlayerMovementState.Crouching;
+    }
 }
 
 public enum PlayerMovementState
@@ -21,5 +30,6 @@ public enum PlayerMovementState
     Jumping = 4,
     Falling = 5,
     Strafing = 6,
+    Crouching = 7,
 
 }

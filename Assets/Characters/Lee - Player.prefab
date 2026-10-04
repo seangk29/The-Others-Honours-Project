@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 3357837051996858912}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.85, z: 0.06}
+  m_LocalPosition: {x: 0, y: 0.574, z: -0.026}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -921,7 +921,12 @@ MonoBehaviour:
   cam: {fileID: 8480334146508782981}
   runAcceleration: 50
   runSpeed: 4
+  sprintAcceleration: 0
+  sprintSpeed: 0
   drag: 30
+  movingThreshold: 0.01
+  gravity: 25
+  jumpSpeed: 1
   lookSenseH: 0.33
   lookSenseV: 0.33
   lookLimitV: 72
@@ -937,6 +942,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3556feaa31d0d441951a3deb66a6a7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  holdToSprint: 1
 --- !u!95 &4851532071617716644
 Animator:
   serializedVersion: 7
@@ -987,6 +993,7 @@ MonoBehaviour:
   playerAnim: {fileID: 4851532071617716644}
   locomotionBlendSpeed: 4
   playerLocomotionInput: {fileID: 3816227821957505264}
+  playerState: {fileID: 0}
 --- !u!4 &9036608542772237306 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6c143dbd77bc390479f3d67497b4a96c, type: 3}
