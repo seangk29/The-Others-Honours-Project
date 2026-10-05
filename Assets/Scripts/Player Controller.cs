@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -26,7 +27,10 @@ public class PlayerController : MonoBehaviour
     public float gravity = 25f;
     public float jumpSpeed = 1f;
 
+    public float crouchAcceleration;
     public float crouchSpeed;
+    public float crouchYScale;
+    public float startYScale;
 
     [Header("Camera Settings")]
     public float lookSenseH;
@@ -46,6 +50,8 @@ public class PlayerController : MonoBehaviour
     {
         locomotionInput = GetComponent<PlayerLocomotionInput>();
         playersState = GetComponent<PlayerState>();
+
+        startYScale = transform.localScale.y;
     }
     #endregion
 
@@ -56,6 +62,7 @@ public class PlayerController : MonoBehaviour
         UpdateMovementState();
         HandleVerticalMovement();
         HandleLateralMovement();
+        HandleCrouching();
       
 
 
@@ -64,14 +71,16 @@ public class PlayerController : MonoBehaviour
 
     void UpdateMovementState()
     {
+        //bool canRun = CanRun();
         bool isMovementInput = locomotionInput.MovementInput != Vector2.zero;
         bool isMovingLaterally = IsMovingLaterally();
         bool isSprinting = locomotionInput.sprintToggledOn && isMovingLaterally;
-      
+        bool isCrouching = /*(isMovingLaterally && !canRun)  || */ locomotionInput.crouchToggledOn;
         bool isGrounded = IsGrounded();
         
 
-        PlayerMovementState lateralState = isSprinting ? PlayerMovementState.Sprinting : isMovingLaterally ||
+        PlayerMovementState lateralState = isCrouching ? PlayerMovementState.Crouching :
+                                           isSprinting ? PlayerMovementState.Sprinting : isMovingLaterally ||
                                            isMovementInput ? PlayerMovementState.Running : PlayerMovementState.Idle;
         
         playersState.SetPlayerMovementState(lateralState);
@@ -114,13 +123,16 @@ public class PlayerController : MonoBehaviour
         // Create quick references for current state
         bool isSprinting = playersState.currentPlayerMovementState == PlayerMovementState.Sprinting;
         bool isGrounded = playersState.InGroundedState();
+        bool isCrouching = playersState.currentPlayerMovementState == PlayerMovementState.Crouching;
        
 
         // State dependant acceleration and speed
-        float lateralAcceleration = !isGrounded ? airAcceleration :
+        float lateralAcceleration = isCrouching ? crouchAcceleration :
+                                    !isGrounded ? airAcceleration :
                                     isSprinting ? sprintAcceleration : runAcceleration;
 
-        float clampLateralMagnitude = !isGrounded ? sprintSpeed:
+        float clampLateralMagnitude =  isCrouching ? crouchSpeed :
+                                       !isGrounded ? sprintSpeed:
                                        isSprinting ? sprintSpeed : runSpeed;
         
         
@@ -137,6 +149,22 @@ public class PlayerController : MonoBehaviour
         newVelocity.y += verticalVelocity;
 
         characterController.Move(newVelocity * Time.deltaTime);
+    }
+
+    void HandleCrouching()
+    {
+        bool isCrouching = locomotionInput.crouchToggledOn;
+
+        if (isCrouching)
+        {
+            characterController.transform.localScale = new Vector3(transform.localScale.x, crouchYScale, transform.localScale.z);
+           
+        }
+        else if (!isCrouching)
+        {
+            characterController.transform.localScale = new Vector3(transform.localScale.x, startYScale, transform.localScale.z);
+            
+        }
     }
 
     #endregion
@@ -166,6 +194,11 @@ public class PlayerController : MonoBehaviour
     private bool IsGrounded()
     {
         return characterController.isGrounded;
+    }
+
+    private bool CanRun()
+    {
+        return locomotionInput.MovementInput.y >= Mathf.Abs(locomotionInput.MovementInput.x);
     }
 
     #endregion

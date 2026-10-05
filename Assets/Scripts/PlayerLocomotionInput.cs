@@ -83,14 +83,12 @@ public class PlayerLocomotionInput : MonoBehaviour, InputSystem_Actions.IPlayerA
 
     public void OnToggleCrouch(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (!context.performed)
         {
-            crouchToggledOn = holdToCrouch || !crouchToggledOn;
+            return;
         }
-        else if (context.canceled)
-        {
-            crouchToggledOn = !holdToCrouch && crouchToggledOn;
-        }
+
+        crouchToggledOn = !crouchToggledOn;
     }
 
     #endregion
