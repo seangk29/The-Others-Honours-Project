@@ -43,6 +43,7 @@ public class PlayerController : MonoBehaviour
 
     private PlayerLocomotionInput locomotionInput;
     private PlayerState playersState;
+    private EnemyController enemy;
     #endregion
 
     #region Start Up
@@ -50,6 +51,8 @@ public class PlayerController : MonoBehaviour
     {
         locomotionInput = GetComponent<PlayerLocomotionInput>();
         playersState = GetComponent<PlayerState>();
+
+        enemy = GameObject.FindGameObjectWithTag("Enemy").GetComponent<EnemyController>();
 
         startYScale = transform.localScale.y;
     }
@@ -158,11 +161,13 @@ public class PlayerController : MonoBehaviour
         if (isCrouching)
         {
             characterController.transform.localScale = new Vector3(transform.localScale.x, crouchYScale, transform.localScale.z);
+            enemy.detectionRange = 7f;
            
         }
         else if (!isCrouching)
         {
             characterController.transform.localScale = new Vector3(transform.localScale.x, startYScale, transform.localScale.z);
+            enemy.detectionRange = 10f;
             
         }
     }

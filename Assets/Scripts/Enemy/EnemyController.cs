@@ -1,4 +1,5 @@
 using System.Collections;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,6 +10,7 @@ public enum EnemyState
     Patrol,
     FollowPlayer,
     Attack,
+    CaughtPlayer,
 
 }
 public class EnemyController : MonoBehaviour
@@ -41,6 +43,8 @@ public class EnemyController : MonoBehaviour
     public PlayerHealth playerHealth;
 
     private static int isAttackingHash = Animator.StringToHash("Attack");
+    private static int isCaughtHash = Animator.StringToHash("Found");
+    private static int isChasingHash = Animator.StringToHash("Chasing");
 
 
     private void Awake()
@@ -67,7 +71,7 @@ public class EnemyController : MonoBehaviour
                 Patrol();
                 if (distanceToPlayer <= detectionRange && CanSeePlayer())
                 {
-                    state = EnemyState.FollowPlayer;
+                    state = EnemyState.CaughtPlayer;
                 }
                 break;
 
@@ -102,12 +106,14 @@ public class EnemyController : MonoBehaviour
                 {
                     state = EnemyState.FollowPlayer;
                     agent.isStopped = false;
-                    
+
 
                 }
                 isAttacking = false;
+                break;
 
-
+            case EnemyState.CaughtPlayer:
+                CaughtPlayer();
                 break;
 
         }
@@ -119,23 +125,23 @@ public class EnemyController : MonoBehaviour
     void OnAttackAnimationEnd()
     {
 
-       // isAttacking = false;
-        
-       
+        // isAttacking = false;
+
+
     }
     void Attack()
     {
         agent.isStopped = true;
-        var direction = (player.position - transform.position).normalized; 
+        var direction = (player.position - transform.position).normalized;
         direction.y = 0f;
 
         if (playerHealth.invul <= 0)
         {
             playerHealth.takeDamage = true;
-            
+
         }
-        
-      
+
+
         if (direction == Vector3.zero)
         {
             transform.rotation = Quaternion.LookRotation(direction);
@@ -145,21 +151,49 @@ public class EnemyController : MonoBehaviour
     }
     void StartAttack()
     {
-       
+
 
         agent.isStopped = true;
         isAttacking = true;
-       
+
 
     }
 
+    void CaughtPlayer()
+    {
+        StartCoroutine(Caught());
+
+    }
+
+     IEnumerator Caught()
+    {
+
+        bool isCaught = state == EnemyState.CaughtPlayer;
+
+        isCaught = true;
+
+        agent.isStopped = true;
+
+        yield return new WaitForSeconds(2f);
+
+        agent.isStopped = false;
+        isCaught = false;
+
+        state = EnemyState.FollowPlayer;
+
+    }
+        
 
     void FollowPlayer()
     {
         agent.SetDestination(player.position);
+        agent.speed = 5.5f;
+
     }
     void Patrol()
     {
+        agent.speed = 2.5f;
+
         if (isWaiting) return;
 
         if (!agent.pathPending && agent.remainingDistance <= stopAtDistance)
@@ -211,11 +245,18 @@ public class EnemyController : MonoBehaviour
 
     private void UpdateAnimations()
     {
-        var isMoving = agent.velocity.sqrMagnitude > 0.01f;
+        var isMoving = agent.velocity.sqrMagnitude > 0.01f && state == EnemyState.Patrol;
         anim.SetBool("isWalking", isMoving);
 
         bool Attack = state == EnemyState.Attack;
         anim.SetBool(isAttackingHash, Attack);
+
+        bool isCaught = state == EnemyState.CaughtPlayer;
+        anim.SetBool(isCaughtHash, isCaught);
+
+        bool isChasing = agent.velocity.sqrMagnitude > 0.01f && state == EnemyState.FollowPlayer;
+        anim.SetBool(isChasingHash, isChasing);
+
     }
 
     private bool CanSeePlayer()
