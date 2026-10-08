@@ -38,10 +38,16 @@ public class EnemyController : MonoBehaviour
     public EnemyState state = EnemyState.Patrol;
 
 
+    public PlayerHealth playerHealth;
+
+    private static int isAttackingHash = Animator.StringToHash("Attack");
+
+
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
+        playerHealth = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerHealth>();
     }
 
 
@@ -92,14 +98,16 @@ public class EnemyController : MonoBehaviour
 
             case EnemyState.Attack:
                 Attack();
-
                 if (!isAttacking && distanceToPlayer > attackRange)
                 {
                     state = EnemyState.FollowPlayer;
                     agent.isStopped = false;
-                    OnAttackAnimationEnd();
+                    
+
                 }
-               
+                isAttacking = false;
+
+
                 break;
 
         }
@@ -111,8 +119,9 @@ public class EnemyController : MonoBehaviour
     void OnAttackAnimationEnd()
     {
 
-        isAttacking = false;
-        anim.SetTrigger("Idle");
+       // isAttacking = false;
+        
+       
     }
     void Attack()
     {
@@ -120,16 +129,27 @@ public class EnemyController : MonoBehaviour
         var direction = (player.position - transform.position).normalized; 
         direction.y = 0f;
 
+        if (playerHealth.invul <= 0)
+        {
+            playerHealth.takeDamage = true;
+            
+        }
+        
+      
         if (direction == Vector3.zero)
         {
             transform.rotation = Quaternion.LookRotation(direction);
         }
+
+
     }
     void StartAttack()
     {
+       
+
         agent.isStopped = true;
         isAttacking = true;
-        anim.SetTrigger("Attack");
+       
 
     }
 
@@ -193,6 +213,9 @@ public class EnemyController : MonoBehaviour
     {
         var isMoving = agent.velocity.sqrMagnitude > 0.01f;
         anim.SetBool("isWalking", isMoving);
+
+        bool Attack = state == EnemyState.Attack;
+        anim.SetBool(isAttackingHash, Attack);
     }
 
     private bool CanSeePlayer()
