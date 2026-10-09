@@ -1692,7 +1692,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9297821c43c6b94488b912ff524709d8, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 12.5
+      value: 21.77
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9297821c43c6b94488b912ff524709d8, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3993,7 +3993,7 @@ MonoBehaviour:
   stopAtDistance: 0.5
   patrolWaitTime: 2
   detectionRange: 10
-  viewAngle: 135
+  viewAngle: 90
   lostPlayerTime: 3
   timeSinceLostPlayer: 3
   attackRange: 1.2
@@ -11294,7 +11294,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9036608542772237306, guid: a91ea9f99198b5c4182a003d65417360, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 12.58
+      value: 18.24
       objectReference: {fileID: 0}
     - target: {fileID: 9036608542772237306, guid: a91ea9f99198b5c4182a003d65417360, type: 3}
       propertyPath: m_LocalPosition.y
