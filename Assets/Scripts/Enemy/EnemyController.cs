@@ -11,6 +11,7 @@ public enum EnemyState
     FollowPlayer,
     Attack,
     CaughtPlayer,
+    InvestigateNoise,
 
 }
 public class EnemyController : MonoBehaviour
@@ -25,6 +26,15 @@ public class EnemyController : MonoBehaviour
     public float viewAngle = 90f;
     public float lostPlayerTime = 3f;
     public float timeSinceLostPlayer;
+
+    public float playerFoundTimer;
+    public float playerHasBeenFound;
+
+    public float soundDetectionRange;
+    public Transform noise;
+    public float distractionTimer;
+    public float returnToPost;
+    public bool killOldPlayerPos;
 
     public float attackRange = 1.2f;
     public bool isAttacking;
@@ -41,10 +51,12 @@ public class EnemyController : MonoBehaviour
 
 
     public PlayerHealth playerHealth;
+    public PlayerController playerController;
 
     private static int isAttackingHash = Animator.StringToHash("Attack");
     private static int isCaughtHash = Animator.StringToHash("Found");
     private static int isChasingHash = Animator.StringToHash("Chasing");
+    private static int isInvestigatingHash = Animator.StringToHash("Investigating");
 
 
     private void Awake()
@@ -52,6 +64,7 @@ public class EnemyController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
         playerHealth = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerHealth>();
+        playerController = GameObject.FindGameObjectWithTag("Player").GetComponent <PlayerController>();
     }
 
 
@@ -71,7 +84,47 @@ public class EnemyController : MonoBehaviour
                 Patrol();
                 if (distanceToPlayer <= detectionRange && CanSeePlayer())
                 {
-                    state = EnemyState.CaughtPlayer;
+
+                    playerFoundTimer += Time.deltaTime;
+
+                    if (playerFoundTimer >= playerHasBeenFound)
+                    {
+                        state = EnemyState.CaughtPlayer;
+                        playerFoundTimer = 0;
+                    }
+
+                }
+                else if (!CanSeePlayer())
+                {
+                    playerFoundTimer -= Time.deltaTime;
+
+                    if (playerFoundTimer <= 0)
+                    {
+                        playerFoundTimer = 0;
+                    }
+                }
+
+                if (distanceToPlayer <= detectionRange && playerController.soundDetection > distanceToPlayer)
+                {
+                    state = EnemyState.InvestigateNoise;
+                }
+
+                break;
+            case EnemyState.InvestigateNoise:
+                noise = GameObject.FindGameObjectWithTag("noiseMaker").GetComponent<Transform>();
+                InvestigateNoise();
+
+                if (distanceToPlayer <= detectionRange && CanSeePlayer())
+                {
+                    playerFoundTimer += Time.deltaTime;
+
+                    if (playerFoundTimer >= playerHasBeenFound)
+                    {
+                        state = EnemyState.CaughtPlayer;
+                        playerFoundTimer = 0;
+                    }
+
+                    
                 }
                 break;
 
@@ -119,6 +172,8 @@ public class EnemyController : MonoBehaviour
         }
 
         UpdateAnimations();
+
+        
     }
 
 
@@ -161,12 +216,17 @@ public class EnemyController : MonoBehaviour
 
     void CaughtPlayer()
     {
+       
         StartCoroutine(Caught());
+        killOldPlayerPos = true;
 
     }
 
      IEnumerator Caught()
     {
+        killOldPlayerPos = true;
+        
+        timeSinceLostPlayer = 0;
 
         bool isCaught = state == EnemyState.CaughtPlayer;
 
@@ -174,16 +234,57 @@ public class EnemyController : MonoBehaviour
 
         agent.isStopped = true;
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1.5f);
+
+        
 
         agent.isStopped = false;
         isCaught = false;
 
         state = EnemyState.FollowPlayer;
 
+        if (killOldPlayerPos == true)
+        {
+            ResetInvesitgate();
+            killOldPlayerPos = false;
+        }
+
     }
         
+    void InvestigateNoise()
+    {
+        
+        agent.SetDestination(noise.position);
+        
 
+        if (agent.transform.position.x == noise.position.x )
+        {
+            distractionTimer += Time.deltaTime;
+           
+
+            if (distractionTimer >= returnToPost )
+            {
+                GoToClosestPatrolPoint();
+                state = EnemyState.Patrol;
+
+                playerController.createNoiseTarget = true;
+                Destroy(noise.gameObject);
+                distractionTimer = 0;
+               
+            }
+        }
+
+      
+       
+    }
+
+    void ResetInvesitgate()
+    {
+        playerController.createNoiseTarget = true;
+        Destroy(noise.gameObject);
+        distractionTimer = 0;
+      
+    }
     void FollowPlayer()
     {
         agent.SetDestination(player.position);
@@ -200,6 +301,8 @@ public class EnemyController : MonoBehaviour
         {
             StartCoroutine(WaitAtPatrolPoint());
         }
+
+       
     }
     private IEnumerator WaitAtPatrolPoint()
     {
@@ -245,7 +348,8 @@ public class EnemyController : MonoBehaviour
 
     private void UpdateAnimations()
     {
-        var isMoving = agent.velocity.sqrMagnitude > 0.01f && state == EnemyState.Patrol;
+        var isMoving = agent.velocity.sqrMagnitude > 0.01f && state == EnemyState.Patrol 
+                    || agent.velocity.sqrMagnitude > 0.01f  && state == EnemyState.InvestigateNoise;
         anim.SetBool("isWalking", isMoving);
 
         bool Attack = state == EnemyState.Attack;
@@ -257,6 +361,7 @@ public class EnemyController : MonoBehaviour
         bool isChasing = agent.velocity.sqrMagnitude > 0.01f && state == EnemyState.FollowPlayer;
         anim.SetBool(isChasingHash, isChasing);
 
+        
     }
 
     private bool CanSeePlayer()

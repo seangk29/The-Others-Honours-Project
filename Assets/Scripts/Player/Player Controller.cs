@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     [Header("Components")]
     public CharacterController characterController;
     public Camera cam;
+    public GameObject noisePrefab;
 
     [Header("Base Movement")]
     public float runAcceleration;
@@ -32,6 +33,9 @@ public class PlayerController : MonoBehaviour
     public float crouchYScale;
     public float startYScale;
 
+    public float soundDetection;
+    public bool createNoiseTarget = true;
+
     [Header("Camera Settings")]
     public float lookSenseH;
     public float lookSenseV;
@@ -44,6 +48,8 @@ public class PlayerController : MonoBehaviour
     private PlayerLocomotionInput locomotionInput;
     private PlayerState playersState;
     private EnemyController enemy;
+
+    public GameObject currentNoise;
     #endregion
 
     #region Start Up
@@ -99,6 +105,31 @@ public class PlayerController : MonoBehaviour
             playersState.SetPlayerMovementState(PlayerMovementState.Falling);
         }
 
+        if (isSprinting)
+        {
+            soundDetection = 10f;
+        }
+        else if (isCrouching && isMovementInput)
+        {
+            soundDetection = 4f;
+        }
+        else if (isMovementInput)
+        {
+            soundDetection = 6f;
+        }
+        else if (!isMovementInput)
+        {
+            soundDetection = 0f;
+        }
+
+
+
+        if (enemy.state == EnemyState.InvestigateNoise && createNoiseTarget == true)
+        {
+            Instantiate(noisePrefab, transform.position, Quaternion.identity);
+            createNoiseTarget = false;
+        }
+
     }
 
     void HandleVerticalMovement()
@@ -118,7 +149,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
+  
     
     
     void HandleLateralMovement()
