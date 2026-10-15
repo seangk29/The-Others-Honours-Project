@@ -56,7 +56,7 @@ public class EnemyController : MonoBehaviour
     private static int isAttackingHash = Animator.StringToHash("Attack");
     private static int isCaughtHash = Animator.StringToHash("Found");
     private static int isChasingHash = Animator.StringToHash("Chasing");
-    private static int isInvestigatingHash = Animator.StringToHash("Investigating");
+   
 
 
     private void Awake()
@@ -124,8 +124,9 @@ public class EnemyController : MonoBehaviour
                         playerFoundTimer = 0;
                     }
 
-                    
                 }
+
+               
                 break;
 
             case EnemyState.FollowPlayer:

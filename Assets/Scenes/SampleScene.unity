@@ -3993,9 +3993,9 @@ MonoBehaviour:
   lostPlayerTime: 3
   timeSinceLostPlayer: 3
   playerFoundTimer: 0
-  playerHasBeenFound: 1
+  playerHasBeenFound: 0.5
   soundDetectionRange: 5
-  noise: {fileID: 4584094483391630299, guid: 5cfe4afb623da3a41b278750f62c0a52, type: 3}
+  noise: {fileID: 0}
   distractionTimer: 0
   returnToPost: 5
   killOldPlayerPos: 0

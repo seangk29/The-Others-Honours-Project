@@ -108,18 +108,22 @@ public class PlayerController : MonoBehaviour
         if (isSprinting)
         {
             soundDetection = 10f;
+            enemy.playerHasBeenFound = 0f;
         }
         else if (isCrouching && isMovementInput)
         {
             soundDetection = 4f;
+            enemy.playerHasBeenFound = 2f;
         }
         else if (isMovementInput)
         {
             soundDetection = 6f;
+            enemy.playerHasBeenFound = 1f;
         }
         else if (!isMovementInput)
         {
             soundDetection = 0f;
+            enemy.playerHasBeenFound = 1f;
         }
 
 
