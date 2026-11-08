@@ -163,7 +163,7 @@ public class EnemyController : MonoBehaviour
 
 
                 }
-                isAttacking = false;
+                //isAttacking = false;
                 break;
 
             case EnemyState.CaughtPlayer:
@@ -181,7 +181,9 @@ public class EnemyController : MonoBehaviour
     void OnAttackAnimationEnd()
     {
 
-        // isAttacking = false;
+        isAttacking = false;
+
+        
 
 
     }
@@ -191,19 +193,17 @@ public class EnemyController : MonoBehaviour
         var direction = (player.position - transform.position).normalized;
         direction.y = 0f;
 
-        if (playerHealth.invul <= 0)
-        {
-            playerHealth.takeDamage = true;
-
-        }
-
-
+        
         if (direction == Vector3.zero)
         {
             transform.rotation = Quaternion.LookRotation(direction);
         }
 
+        if (playerHealth.invul <= 0)
+        {
+            playerHealth.takeDamage = true;
 
+        }
     }
     void StartAttack()
     {
