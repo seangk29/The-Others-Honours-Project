@@ -2557,6 +2557,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: 'Elle - Player '
       objectReference: {fileID: 0}
+    - target: {fileID: 8512835994519816512, guid: d5f77a67c24727242af80b82f801eb0a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9036608542772237306, guid: d5f77a67c24727242af80b82f801eb0a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 18.24
@@ -3373,7 +3377,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2510506833657541591, guid: c7cb4e13bc78c0d499ee1497dbeab980, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2998495775394720109, guid: c7cb4e13bc78c0d499ee1497dbeab980, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3426,7 +3430,7 @@ PrefabInstance:
     - target: {fileID: 8656362993184877186, guid: c7cb4e13bc78c0d499ee1497dbeab980, type: 3}
       propertyPath: player
       value: 
-      objectReference: {fileID: 1629715254}
+      objectReference: {fileID: 1938459730}
     - target: {fileID: 8656362993184877186, guid: c7cb4e13bc78c0d499ee1497dbeab980, type: 3}
       propertyPath: patrolPoints.Array.size
       value: 6
@@ -9813,6 +9817,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1253075565}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!4 &1938459730 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9036608542772237306, guid: d5f77a67c24727242af80b82f801eb0a, type: 3}
+  m_PrefabInstance: {fileID: 659329232}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &2020305093
 Mesh:
   m_ObjectHideFlags: 0
@@ -10284,7 +10293,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8512835994519816512, guid: a91ea9f99198b5c4182a003d65417360, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8512835994519816512, guid: a91ea9f99198b5c4182a003d65417360, type: 3}
       propertyPath: m_TagString
@@ -10529,7 +10538,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1945774536399690986, guid: 7fd88af44cc839445bd1ffe7ff4d86d8, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2490882051084541259, guid: 7fd88af44cc839445bd1ffe7ff4d86d8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -11063,9 +11072,9 @@ SceneRoots:
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 1371104719872428333}
+  - {fileID: 5681178121126471175}
   - {fileID: 719480358}
   - {fileID: 1253075565}
-  - {fileID: 5681178121126471175}
   - {fileID: 715194875}
   - {fileID: 984562835}
   - {fileID: 826179465}
